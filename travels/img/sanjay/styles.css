@@ -1,0 +1,25 @@
+/* Shared styles for Sanjay Bike World */
+:root{
+  --bg:#a6eef9;
+  --card:#eaeded;
+  --accent:#1e1e1e;
+  --accent-contrast:#fff;
+  --primary:#51b2bd;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);image:url("a.jpg");background-size:cover;background-attachment:fixed}
+header{background:var(--accent);color:var(--accent-contrast);padding:20px 16px;text-align:center}
+.main-nav{margin-top:10px}
+.main-nav a{color:var(--accent-contrast);text-decoration:none;margin:0 8px;padding:6px 10px;border-radius:4px}
+.main-nav a:hover{background:rgba(255,255,255,0.06)}
+.container{padding:20px;max-width:1100px;margin:0 auto}
+.bike-card{background:var(--card);padding:15px;margin:15px 0;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+.bike-card h2{margin-top:0}
+footer{background:var(--accent);color:var(--accent-contrast);text-align:center;padding:12px;position:fixed;bottom:0;width:100%}
+.hero{background:var(--card);padding:24px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);text-align:center}
+.btn{display:inline-block;background:var(--primary);color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none}
+
+@media (min-width:700px){
+  .main-nav{position:absolute;right:20px;top:22px}
+  header{text-align:left;padding:20px 40px}
+}

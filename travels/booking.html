@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRI Travels - Book Your Ride</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .booking-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #205887;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+            box-sizing: border-box;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #205887;
+        }
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .submit-btn {
+            background: #ffd600;
+            color: #205887;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background: #fcb900;
+            color: #123558;
+        }
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="img\logo.png" alt="logo">
+        <h1>CRI Travels</h1>
+    </header>
+    <nav>
+            <ul class="sidebar">
+           <li onclick=hideSidebar()><a href=""><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></a>
+            <a href="home.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="about.html">About Us</a>
+            <a href="booking.html" class="active">Book Now</a>
+            <a href="contact.html">Contact</a>
+            <a href="index.html">Main Menu</a>
+            <a href="events.html">Events</a>
+            </ul>
+            <ul>
+            <li class="hideOnMobile"><a href="home.html">Home</a></li>
+            <li class="hideOnMobile"><a href="services.html">Services</a></li>
+            <li class="hideOnMobile"><a href="about.html">About Us</a></li>
+            <li class="hideOnMobile"><a href="booking.html" class="active">Book Now</a></li>
+            <li class="hideOnMobile"><a href="contact.html">Contact</a></li>
+            <li class="hideOnMobile"><a href="index.html">Main Menu</a></li>
+            <li class="hideOnMobile"><a href="events.html">Events</a></li>
+            <li class="menu-button" onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>
+            </ul>            
+        </nav>
+        <script>
+        function showSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.style.display = 'flex';
+            sidebar.style.flexDirection = 'column';     
+            sidebar.style.alignItems = 'flex-start';
+        }        
+        function hideSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.style.display = 'none';
+        }
+    </script>
+    <marquee behavior="slideIn" direction="right"><b>welcome to CRI TRAVELS</b></marquee>
+    
+    <section class="services-list">
+        <h2>Book Your Ride</h2>
+        <p style="text-align: center; margin-bottom: 30px;">Fill out the form below and we'll get back to you shortly to confirm your booking.</p>
+        
+        <form class="booking-form" action="#" method="post" onsubmit="return handleSubmit(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="service">Service Type *</label>
+                <select id="service" name="service" required>
+                    <option value="">Select a service</option>
+                    <option value="auto">Three-Wheeler Auto</option>
+                    <option value="maxicab">Maxi Cab</option>
+                    <option value="car">Car Rental</option>
+                    <option value="coach">Coach Bus</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="pickup">Pick-up Location *</label>
+                <input type="text" id="pickup" name="pickup" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="destination">Destination *</label>
+                <input type="text" id="destination" name="destination" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="date">Travel Date *</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="time">Travel Time *</label>
+                    <input type="time" id="time" name="time" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="passengers">Number of Passengers *</label>
+                <input type="number" id="passengers" name="passengers" min="1" max="50" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Additional Notes</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Any special requirements or additional information..."></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">Submit Booking Request</button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 30px; border-top: 2px solid #e0e0e0;">
+            <p><strong>Need immediate assistance?</strong></p>
+            <p>Call us at <a href="tel:+917558198405" style="color: #205887; font-weight: bold;">+91 75581 98405</a></p>
+        </div>
+    </section>
+    
+    <script>
+        function handleSubmit(event) {
+            const email = "critravels@gmail.com";
+            const subject = "New Booking Request";
+            const body = `Name: ${document.getElementById('name').value}\nPhone: ${document.getElementById('phone').value}\nEmail: ${document.getElementById('email').value}\nService: ${document.getElementById('service').value}\nPickup: ${document.getElementById('pickup').value}\nDestination: ${document.getElementById('destination').value}\nDate: ${document.getElementById('date').value}\nTime: ${document.getElementById('time').value}\nPassengers: ${document.getElementById('passengers').value}\nNotes: ${document.getElementById('notes').value}`;
+            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            event.preventDefault();
+            alert('Thank you for your booking request! We will contact you shortly to confirm your reservation.');
+            // In a real application, this would send the data to a server
+            return false;
+        }
+        
+        // Set minimum date to today
+        document.getElementById('date').min = new Date().toISOString().split('T')[0];
+    </script>
+    
+    <marquee behavior="slideIn" direction="left"><b>Thanks for visiting our website</b></marquee>
+    <footer>
+        <p>&copy; 2025 CRI Travels. All rights reserved.</p>
+    </footer>
+</body>
+</html>

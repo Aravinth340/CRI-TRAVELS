@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRI Travels - Events</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .event-card {
+            background: #f9f9f9;
+            border-left: 4px solid #205887;
+            padding: 20px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .event-card h3 {
+            color: #205887;
+            margin-bottom: 10px;
+        }
+        .event-date {
+            color: #ef8f2d;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .event-details {
+            color: #555;
+            line-height: 1.6;
+        }
+        .event-price {
+            color: #205887;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="img\logo.png" alt="logo">
+        <h1>CRI Travels</h1>
+    </header>
+    <nav>
+            <ul class="sidebar">
+           <li onclick=hideSidebar()><a href=""><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></a>
+            <a href="home.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="about.html" class="active">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="index.html">Main Menu</a>
+            <a href="events.html">Events</a>
+            </ul>
+            <ul>
+            <li class="hideOnMobile"><a href="home.html">Home</a></li>
+            <li class="hideOnMobile"><a href="services.html">Services</a></li>
+            <li class="hideOnMobile"><a href="about.html" class="active">About Us</a></li>
+            <li class="hideOnMobile"><a href="contact.html">Contact</a></li>
+            <li class="hideOnMobile"><a href="index.html">Main Menu</a></li>
+            <li class="hideOnMobile"><a href="events.html">Events</a></li>
+            <li class="menu-button" onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>
+            </ul>            
+        </nav>
+        <script>
+        function showSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.style.display = 'flex';
+            sidebar.style.flexDirection = 'column';     
+            sidebar.style.alignItems = 'flex-start';
+        }        function hideSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.style.display = 'none';
+        }
+    </script>
+    <marquee behavior="slideIn" direction="right"> <b>welcome to CRI TRAVELS</b></marquee>
+     <div class="slider">
+  <img src="image-1.jpeg" alt="Slide 1">
+  <img src="image-2.jpeg" alt="Slide 2">
+  <img src="image-3.jpeg" alt="Slide 3">
+  <img src="image-4.jpeg" alt="Slide 4">
+</div>
+    <section class="services-list">
+        <h2>Upcoming Travel Events & Tours</h2>
+        <p style="text-align: center; margin-bottom: 30px;">Join our special travel events and group tours across Tamil Nadu. Book your spot today!</p>
+        
+        <div class="event-card">
+            <div class="event-date">January 3-5, 2026</div>
+            <h3>Ooty Hill Station Weekend Tour</h3>
+            <div class="event-details">
+                <p>Experience the beauty of the "Queen of Hill Stations" with our 3-day weekend package. Visit botanical gardens, Ooty Lake, tea estates, and enjoy the scenic Nilgiri Mountain Railway.</p>
+                <p><strong>Includes:</strong> Coach bus transportation, accommodation, breakfast, and guided tours.</p>
+            </div>
+            <div class="event-price">Starting from ₹4,500 per person</div>
+        </div>
+
+        <div class="event-card">
+            <div class="event-date">February 5-7, 2026</div>
+            <h3>Kodaikanal Nature Retreat</h3>
+            <div class="event-details">
+                <p>Explore the misty mountains of Kodaikanal with our special group package. Visit Coaker's Walk, Bryant Park, Pillar Rocks, and the serene Kodai Lake.</p>
+                <p><strong>Includes:</strong> AC coach bus, hotel stay, meals, and sightseeing tours.</p>
+            </div>
+            <div class="event-price">Starting from ₹5,200 per person</div>
+        </div>
+
+        <div class="event-card">
+            <div class="event-date">February 10-15, 2026</div>
+            <h3>Rameshwaram & Dhanushkodi Pilgrimage Tour</h3>
+            <div class="event-details">
+                <p>Spiritual journey to the sacred Rameshwaram temple and the ghost town of Dhanushkodi. Experience the confluence of Bay of Bengal and Indian Ocean.</p>
+                <p><strong>Includes:</strong> Coach bus transport, accommodation, and temple visits with guide.</p>
+            </div>
+            <div class="event-price">Starting from ₹3,800 per person</div>
+        </div>
+
+        <div class="event-card">
+            <div class="event-date">March 25-30, 2025</div>
+            <h3>Yercaud Hills & Coffee Estate Tour</h3>
+            <div class="event-details">
+                <p>Discover the hidden gem of Eastern Ghats. Visit Yercaud Lake, Lady's Seat viewpoint, coffee plantations, and enjoy the cool climate of the Shevaroy Hills.</p>
+                <p><strong>Includes:</strong> Comfortable transportation, resort stay, and plantation tours.</p>
+            </div>
+            <div class="event-price">Starting from ₹4,000 per person</div>
+        </div>
+
+        <div class="event-card">
+            <div class="event-date">June 1-5, 2026</div>
+            <h3>Madurai Temple Heritage Tour</h3>
+            <div class="event-details">
+                <p>Explore the rich cultural heritage of Madurai. Visit the magnificent Meenakshi Amman Temple, Thirumalai Nayakkar Palace, and Gandhi Museum.</p>
+                <p><strong>Includes:</strong> AC coach transport, hotel accommodation, and heritage site visits.</p>
+            </div>
+            <div class="event-price">Starting from ₹3,500 per person</div>
+        </div>
+
+        <div class="event-card">
+            <div class="event-date">Customized Group Events</div>
+            <h3>College Trips & Family Tours</h3>
+            <div class="event-details">
+                <p>Planning a college industrial visit, family reunion, or friends' getaway? We offer customized group travel packages to any destination in Tamil Nadu with our fleet of comfortable coach buses.</p>
+                <p><strong>Features:</strong> Flexible itinerary, dedicated driver, AC/Non-AC options available.</p>
+            </div>
+            <div class="event-price">Contact us for custom quotes</div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="booking.html" class="cta-btn">Book Your Event Tour Now</a>
+        </div>
+    </section>
+    
+    <marquee behavior="slideIn" direction="left"><b>Thanks for visiting our website</b></marquee>
+    <footer>
+        <script>
+            const slides = document.querySelector('.slides');
+const slideImages = document.querySelectorAll('.slide');
+
+let counter = 0;
+const size = slideImages[0].clientWidth;
+
+// Function to move the slide
+function autoSlide() {
+  counter++;
+  
+  // Reset to first slide if at the end
+  if (counter >= slideImages.length) {
+    counter = 0;
+  }
+  
+  slides.style.transform = 'translateX(' + (-size * counter) + 'px)';
+}
+
+// Run the function every 3 seconds (3000ms)
+setInterval(autoSlide, 3000);
+        </script>
+        <p>&copy; 2025 CRI Travels. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRI Travels - About Us</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="img\logo.png" width="99em" alt="logo">
+        <h1>CRI Travels</h1>
+    </header>
+     <nav>
+    <ul class="sidebar">
+           <li onclick=hideSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></a>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html" class="active">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="index.html">Main Menu</a></li>
+            <li><a href="events.html">Events</a></li>
+           </ul>
+           <ul>
+            <li class="hideOnMobile"><a href="home.html">Home</a></li>   
+            <li class="hideOnMobile"><a href="services.html">Services</a></li>
+            <li class="hideOnMobile"><a href="about.html" class="active">About Us</a></li>
+            <li class="hideOnMobile"><a href="contact.html">Contact</a></li>
+            <li class="hideOnMobile"><a href="index.html">Main Menu</a></li>
+            <li class="hideOnMobile"><a href="events.html">Events</a></li>
+            <li class="menu-button" onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>           
+           </ul> 
+        </nav>
+        <script>
+        function showSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.style.display = 'flex';
+        }        
+        function hideSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.style.display = 'none';
+        }
+    </script>
+    <marquee behavior="slideIn" direction="right"> <b>welcome to CRI TRAVELS</b></marquee>
+    <div class="slider">
+   <img src="image-1.jpeg" alt="Slide 1">
+  <img src="image-2.jpeg" alt="Slide 2">
+  <img src="image-3.jpeg" alt="Slide 3">
+  <img src="image-4.jpeg" alt="Slide 4">
+</div>
+    <section class="about">
+        <h2>About CRI Travels</h2>
+        <p>CRI Travels is your trusted partner for transportation within Tamil Nadu. With over a decade of experience, our mission is to provide safe, reliable, and affordable rental services. Whether you need a quick auto, a maxi cab for your family, or a private car, we’re just a call away.</p>
+        <ul>
+            <li>All vehicles sanitized and well-maintained</li>
+            <li>Friendly and professional drivers</li>
+            <li>Available 24/7, anywhere in Tamil Nadu</li>
+        </ul>
+    </section>
+    <marquee behavior="slideIn" direction="left"><b>Thanks for visiting our website</b></marquee>
+    <footer>
+        <p>&copy; 2025 CRI Travels. All rights reserved.</p>
+    </footer>
+</body>
+</html>

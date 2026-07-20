@@ -50,7 +50,7 @@ function calculate_fare($service_type, $passengers) {
     // Base fare + per passenger surcharge
     $total = $base + ($passengers - 1) * 100;
     
-    return number_format($total, 2, '.', '');
+    return floatval(number_format($total, 2, '.', ''));
 }
 
 // Handle payment submission
@@ -59,88 +59,102 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($error) && isset($_POST['pay_
     $method = $_POST['method'] ?? 'card';
     $payment_status = 'completed';
     
-    // Create payments table if it doesn't exist
-    $create_table = "CREATE TABLE IF NOT EXISTS payments (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        trip_id INT NOT NULL,
-        client_id INT NOT NULL,
-        amount DECIMAL(10,2) NOT NULL,
-        method VARCHAR(50),
-        status ENUM('pending','completed','failed') DEFAULT 'completed',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE KEY unique_trip_payment (trip_id),
-        FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
-        FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
-    
-    $conn->query($create_table);
-    
-    // Check if payment already exists for this trip
-    $check_stmt = $conn->prepare("SELECT id FROM payments WHERE trip_id = ?");
-    if ($check_stmt) {
-        $check_stmt->bind_param('i', $trip_id);
-        $check_stmt->execute();
-        $check_result = $check_stmt->get_result();
-        $existing_payment = $check_result->fetch_assoc();
-        $check_stmt->close();
+    // Validate amount
+    if ($amount <= 0) {
+        $error = 'Invalid payment amount.';
+    } else {
+        // Create payments table if it doesn't exist
+        $create_table = "CREATE TABLE IF NOT EXISTS payments (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            trip_id INT NOT NULL,
+            client_id INT NOT NULL,
+            amount DECIMAL(10,2) NOT NULL,
+            method VARCHAR(50),
+            status ENUM('pending','completed','failed') DEFAULT 'completed',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_trip_payment (trip_id),
+            FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
         
-        if ($existing_payment) {
-            // Update existing payment
-            $update_stmt = $conn->prepare("UPDATE payments SET amount = ?, method = ?, status = 'completed' WHERE trip_id = ?");
-            if ($update_stmt) {
-                $update_stmt->bind_param('dsi', $amount, $method, $trip_id);
-                if ($update_stmt->execute()) {
+        if (!$conn->query($create_table)) {
+            $error = 'Database error: ' . $conn->error;
+        } else {
+            // Start transaction
+            $conn->begin_transaction();
+            
+            try {
+                // Check if payment already exists for this trip
+                $check_stmt = $conn->prepare("SELECT id FROM payments WHERE trip_id = ? FOR UPDATE");
+                if ($check_stmt === false) {
+                    throw new Exception("Prepare error: " . $conn->error);
+                }
+                
+                $check_stmt->bind_param('i', $trip_id);
+                $check_stmt->execute();
+                $check_result = $check_stmt->get_result();
+                $existing_payment = $check_result->fetch_assoc();
+                $check_stmt->close();
+                
+                $payment_id = null;
+                
+                if ($existing_payment) {
+                    // Update existing payment
+                    $update_stmt = $conn->prepare("UPDATE payments SET amount = ?, method = ?, status = 'completed' WHERE trip_id = ?");
+                    if ($update_stmt === false) {
+                        throw new Exception("Update prepare error: " . $conn->error);
+                    }
+                    
+                    $update_stmt->bind_param('dsi', $amount, $method, $trip_id);
+                    if (!$update_stmt->execute()) {
+                        throw new Exception("Update execute error: " . $update_stmt->error);
+                    }
                     $payment_id = $existing_payment['id'];
                     $update_stmt->close();
-                    
-                    // Update trip fare and status
-                    $trip_stmt = $conn->prepare("UPDATE trips SET fare_amount = ?, payment_status = 'completed', status = 'confirmed' WHERE id = ? AND client_id = ?");
-                    if ($trip_stmt) {
-                        $trip_stmt->bind_param('dii', $amount, $trip_id, $user['id']);
-                        $trip_stmt->execute();
-                        $trip_stmt->close();
+                } else {
+                    // Insert new payment
+                    $insert_stmt = $conn->prepare("INSERT INTO payments (trip_id, client_id, amount, method, status) VALUES (?, ?, ?, ?, 'completed')");
+                    if ($insert_stmt === false) {
+                        throw new Exception("Insert prepare error: " . $conn->error);
                     }
                     
-                    $conn->close();
-                    header('Location: payment_success.php?payment_id=' . urlencode($payment_id));
-                    exit;
-                } else {
-                    $error = 'Payment update failed: ' . $update_stmt->error;
-                    $update_stmt->close();
-                }
-            }
-        } else {
-            // Insert new payment
-            $insert_stmt = $conn->prepare("INSERT INTO payments (trip_id, client_id, amount, method, status) VALUES (?, ?, ?, ?, 'completed')");
-            if ($insert_stmt) {
-                $insert_stmt->bind_param('iids', $trip_id, $user['id'], $amount, $method);
-                if ($insert_stmt->execute()) {
+                    $insert_stmt->bind_param('iids', $trip_id, $user['id'], $amount, $method);
+                    if (!$insert_stmt->execute()) {
+                        throw new Exception("Insert execute error: " . $insert_stmt->error);
+                    }
                     $payment_id = $insert_stmt->insert_id;
                     $insert_stmt->close();
-                    
-                    // Update trip fare and status
-                    $trip_stmt = $conn->prepare("UPDATE trips SET fare_amount = ?, payment_status = 'completed', status = 'confirmed' WHERE id = ? AND client_id = ?");
-                    if ($trip_stmt) {
-                        $trip_stmt->bind_param('dii', $amount, $trip_id, $user['id']);
-                        $trip_stmt->execute();
-                        $trip_stmt->close();
-                    }
-                    
-                    $conn->close();
-                    header('Location: payment_success.php?payment_id=' . urlencode($payment_id));
-                    exit;
-                } else {
-                    $error = 'Payment failed: ' . $insert_stmt->error;
-                    $insert_stmt->close();
                 }
-            } else {
-                $error = 'Database error: ' . $conn->error;
+                
+                // Update trip fare and status
+                $trip_stmt = $conn->prepare("UPDATE trips SET fare_amount = ?, payment_status = 'completed', status = 'confirmed' WHERE id = ? AND client_id = ?");
+                if ($trip_stmt === false) {
+                    throw new Exception("Trip update prepare error: " . $conn->error);
+                }
+                
+                $trip_stmt->bind_param('dii', $amount, $trip_id, $user['id']);
+                if (!$trip_stmt->execute()) {
+                    throw new Exception("Trip update execute error: " . $trip_stmt->error);
+                }
+                $trip_stmt->close();
+                
+                // Commit transaction
+                $conn->commit();
+                
+                // Redirect to success page
+                header('Location: payment_success.php?payment_id=' . intval($payment_id));
+                exit;
+                
+            } catch (Exception $e) {
+                // Rollback on any error
+                $conn->rollback();
+                $error = 'Payment processing failed: ' . $e->getMessage();
             }
         }
     }
 }
 
-$calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passengers']) : '0.00';
+$calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passengers']) : 0.00;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -161,6 +175,24 @@ $calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passen
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+        }
+        
+        header {
+            background: #205887;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        header img {
+            height: 50px;
+        }
+        
+        header h1 {
+            font-size: 1.5rem;
         }
         
         .container {
@@ -391,12 +423,11 @@ $calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passen
         }
         
         footer {
-            background: white;
-            color: #666;
+            background: #205887;
+            color: white;
             text-align: center;
             padding: 20px;
             margin-top: 30px;
-            border-radius: 8px;
         }
         
         @media (max-width: 600px) {
@@ -410,6 +441,10 @@ $calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passen
             
             .button-group {
                 flex-direction: column;
+            }
+            
+            .amount-display .amount {
+                font-size: 2rem;
             }
         }
     </style>
@@ -441,7 +476,7 @@ $calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passen
             <h3>Trip Summary</h3>
             <div class="summary-row">
                 <span class="summary-label">Service Type:</span>
-                <span class="summary-value"><?php echo ucfirst($trip['service_type']); ?></span>
+                <span class="summary-value"><?php echo ucfirst(htmlspecialchars($trip['service_type'])); ?></span>
             </div>
             <div class="summary-row">
                 <span class="summary-label">Pickup Location:</span>
@@ -457,24 +492,24 @@ $calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passen
             </div>
             <div class="summary-row">
                 <span class="summary-label">Travel Time:</span>
-                <span class="summary-value"><?php echo $trip['travel_time']; ?></span>
+                <span class="summary-value"><?php echo htmlspecialchars($trip['travel_time']); ?></span>
             </div>
             <div class="summary-row">
                 <span class="summary-label">Passengers:</span>
-                <span class="summary-value"><?php echo $trip['passengers']; ?></span>
+                <span class="summary-value"><?php echo intval($trip['passengers']); ?></span>
             </div>
         </div>
         
         <!-- Amount Display -->
         <div class="amount-display">
             <div class="label">Amount to Pay</div>
-            <div class="amount">₹<?php echo $calculated_amount; ?></div>
+            <div class="amount">₹<?php echo number_format($calculated_amount, 2); ?></div>
         </div>
         
         <!-- Payment Form -->
-        <form method="POST">
-            <input type="hidden" name="trip_id" value="<?php echo htmlspecialchars($trip_id); ?>">
-            <input type="hidden" name="amount" value="<?php echo htmlspecialchars($calculated_amount); ?>">
+        <form method="POST" name="paymentForm">
+            <input type="hidden" name="trip_id" value="<?php echo intval($trip_id); ?>">
+            <input type="hidden" name="amount" value="<?php echo $calculated_amount; ?>">
             
             <!-- Payment Method Section -->
             <div class="form-section">
@@ -520,7 +555,7 @@ $calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passen
                     </div>
                     <div class="form-group">
                         <label for="card_cvv">CVV</label>
-                        <input type="text" id="card_cvv" name="card_cvv" 
+                        <input type="password" id="card_cvv" name="card_cvv" 
                                placeholder="123" maxlength="4" required>
                     </div>
                 </div>
@@ -533,7 +568,7 @@ $calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passen
             <!-- Action Buttons -->
             <div class="button-group">
                 <a href="book_trip.php" class="btn btn-secondary">← Cancel</a>
-                <button type="submit" name="pay_now" class="btn btn-primary">Pay ₹<?php echo $calculated_amount; ?> →</button>
+                <button type="submit" name="pay_now" class="btn btn-primary">Pay ₹<?php echo number_format($calculated_amount, 2); ?> →</button>
             </div>
         </form>
         
@@ -554,3 +589,4 @@ $calculated_amount = $trip ? calculate_fare($trip['service_type'], $trip['passen
     </footer>
 </body>
 </html>
+<?php $conn->close(); ?>
